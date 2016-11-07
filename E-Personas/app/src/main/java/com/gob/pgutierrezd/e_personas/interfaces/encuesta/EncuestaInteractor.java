@@ -16,5 +16,5 @@ public interface EncuestaInteractor {
         void errorSendInterview();
     }
 
-    void sendInterview(AnswersInterview answersInterview,InformationComplement informationComplement, boolean bandera, final Context context, final OnInterviewFinishedListener listener);
+    void sendInterview(final AnswersInterview answersInterview, final InformationComplement informationComplement, final boolean bandera, final Context context, final OnInterviewFinishedListener listener);
 }

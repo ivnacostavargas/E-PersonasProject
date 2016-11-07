@@ -64,6 +64,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         getMap();
         coord = new String[2];
         checkFlagCoords();
+        showCoords();
 
         mSwitchChangeStatus.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -113,6 +114,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         Cursor cursor2 = database.rawQuery("SELECT * FROM "+Constants.TABLE_ENCUESTAS,null);
         Cursor cursor3 = database.rawQuery("SELECT * FROM "+Constants.TABLE_INFORMACION_COMPLEMENTARIA,null);
         Cursor cursor4 = database.rawQuery("SELECT * FROM "+Constants.TABLE_COORDINATES,null);
+        int i = 0;
     }
 
     private void findViews() {

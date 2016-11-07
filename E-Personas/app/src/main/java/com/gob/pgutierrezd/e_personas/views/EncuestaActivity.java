@@ -10,6 +10,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -99,14 +100,15 @@ public class EncuestaActivity extends AppCompatActivity implements EncuestaView 
     private List<CoordsInterview> coords;
 
     private EncuestaPresenter mEncuestaPresenter;
-    private Object answers;
     private InformationComplement informationComplement;
+    private String myBase64Image;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_encuesta);
         context = getApplicationContext();
+        myBase64Image = "";
         findViews();
         coords = new ArrayList<>();
         getCoordsPerMinute();
@@ -162,8 +164,7 @@ public class EncuestaActivity extends AppCompatActivity implements EncuestaView 
     public void setFieldErrorEmptyInterview() {
         mValidateFields = new ValidateFields();
         mValidateFields.validateText(new EditText[]{
-                mTPregunta5R2ColSegura, mTPregunta8R2ColSegura, mTPregunta9R1ColSegura, mTPregunta1R1IndObra, mTPregunta3R6IndObra,
-                mTPregunta5R1SondAlameda, mTextOtro
+                mTPregunta9R1ColSegura, mTPregunta1R1IndObra,mTPregunta5R1SondAlameda
         });
     }
 
@@ -230,17 +231,11 @@ public class EncuestaActivity extends AppCompatActivity implements EncuestaView 
                 if(resultCode == Activity.RESULT_OK){
                     bm = (Bitmap) data.getExtras().get("data");
                     mPath = data.getData();
+                    try{
+                        bm = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver(), mPath);
+                    }catch (Exception e){}
                     mImgIdentificacion.setImageBitmap(bm);
-                    String myBase64Image = ConvertBase64.encodeToBase64(bm, Bitmap.CompressFormat.JPEG, 100);
-                    try {
-                        File tarjeta = Environment.getExternalStorageDirectory();
-                        File file = new File(tarjeta.getAbsolutePath(), Constants.IMAGE_PROFILE);
-                        OutputStreamWriter osw = new OutputStreamWriter(
-                                new FileOutputStream(file));
-                        osw.write(myBase64Image);
-                        osw.flush();
-                        osw.close();
-                    }catch(Exception e){}
+                    myBase64Image = ConvertBase64.encodeToBase64(bm, Bitmap.CompressFormat.JPEG, 100);
                 }
                 break;
         }
@@ -613,23 +608,7 @@ public class EncuestaActivity extends AppCompatActivity implements EncuestaView 
             informationComplement.setEdad(mTextEdadAprox.getText().toString());
         }
         if(mPath != null){
-            File tarjeta = Environment.getExternalStorageDirectory();
-            File file = new File(tarjeta.getAbsolutePath(), Constants.IMAGE_PROFILE);
-            try {
-                FileInputStream fIn = new FileInputStream(file);
-                InputStreamReader archivo = new InputStreamReader(fIn);
-                BufferedReader br = new BufferedReader(archivo);
-                String linea = br.readLine();
-                String todo = "";
-                while (linea != null) {
-                    todo = todo + linea + "";
-                    linea = br.readLine();
-                }
-                br.close();
-                archivo.close();
-                informationComplement.setFoto(todo);
-            } catch (IOException e) {
-            }
+            informationComplement.setFoto(myBase64Image);
         }
 
         return informationComplement;

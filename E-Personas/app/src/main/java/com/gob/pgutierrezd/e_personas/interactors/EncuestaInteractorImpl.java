@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -24,12 +25,17 @@ public class EncuestaInteractorImpl implements EncuestaInteractor{
     protected SQLiteDatabase database;
 
     @Override
-    public void sendInterview(AnswersInterview answersInterview, InformationComplement informationComplement, boolean bandera, final Context context, final OnInterviewFinishedListener listener) {
+    public void sendInterview(final AnswersInterview answersInterview, final InformationComplement informationComplement, final boolean bandera, final Context context, final OnInterviewFinishedListener listener) {
         if(answersInterview.getsNecesidadColonia().isEmpty() || answersInterview.getoOpinionRealizarObraNombre().isEmpty()
                 || answersInterview.getaMejorarImagen().isEmpty()){
             listener.errorSendInterview();
         }else{
-            saveInterviewSqlite(answersInterview,informationComplement, bandera, context,listener);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    saveInterviewSqlite(answersInterview,informationComplement, bandera, context,listener);
+                }
+            },2000);
         }
     }
 

@@ -51,6 +51,7 @@ public class EncuestaPresenterImpl implements EncuestaPresenter, EncuestaInterac
     @Override
     public void errorSendInterview() {
         if(mEncuestaView != null){
+            mEncuestaView.setFieldErrorEmptyInterview();
             mEncuestaView.hideProgress();
         }
     }
