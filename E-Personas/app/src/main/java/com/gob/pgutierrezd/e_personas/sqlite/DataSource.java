@@ -28,12 +28,17 @@ public class DataSource {
         return db.rawQuery("SELECT * FROM " + Constants.TABLE_ENCUESTAS + " WHERE _id=?",new String[]{id});
     }
 
+    public Cursor getCoordenadas(String id){
+        return db.rawQuery("SELECT * FROM " + Constants.TABLE_COORDINATES + " WHERE " + Constants.IDENCUESTA +"=?",new String[]{id});
+    }
+
     public void Update(String tabla, ContentValues cv, String condicion, String id){
         db.update(tabla, cv, condicion, new String[]{id});
     }
 
     public void deleteRegistro(String table, String id){
         db.delete(table," _id=? ",new String[]{id});
+        db.delete(Constants.TABLE_INFORMACION_COMPLEMENTARIA, Constants.IDENCUESTA +"=?",new String[]{id});
     }
 
     public Cursor getInformacionComplementariaById(String id){

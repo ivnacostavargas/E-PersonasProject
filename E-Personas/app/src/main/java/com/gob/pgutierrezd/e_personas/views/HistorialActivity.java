@@ -87,6 +87,8 @@ public class HistorialActivity extends AppCompatActivity {
                     AdapterView.AdapterContextMenuInfo info1 = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
                     String json = cur2Json(String.valueOf(info1.id));
                     String jsonInfo = jsonInfo(String.valueOf(info1.id));
+                    String jsonCoordenadas = jsonCoordenadas(String.valueOf(info1.id));
+                    enviarCoordenadas(jsonCoordenadas);
                     enviarEncuesta(json, jsonInfo);
                 }catch (Exception e){
                     Log.d("LOGTAG","Error en la opcion ENVIAR_ID " + e);
@@ -121,6 +123,16 @@ public class HistorialActivity extends AppCompatActivity {
         enviarTask.execute(requestPackage);
     }
 
+    public void enviarCoordenadas(String json){
+        String url = getResources().getString(R.string.url);
+        RequestPackage requestPackage = new RequestPackage();
+        requestPackage.setUri(url+"setCoordenadas.php");
+        requestPackage.setMethod("POST");
+        requestPackage.setParams("json", "{\"coordenadas\":"+json +"}");
+        Log.d("LOGTAG","JSON de Coordenadas antes de enviar " + "{\"coordenadas\":"+json +"}");
+        EnviarCoordenadasTask enviarTask =  new EnviarCoordenadasTask(requestPackage,getApplicationContext());
+        enviarTask.execute(requestPackage);
+    }
     /**
      * Metodo para crear el json de las encuestas
      * @param id recibe el id de la encuesta
@@ -167,6 +179,44 @@ public class HistorialActivity extends AppCompatActivity {
     public String jsonInfo(String id) {
         Log.d("LOGTAG", "ID " + id);
         Cursor cursorID = dataSource.getInformacionComplementariaById(id);
+        JSONObject resultSet = new JSONObject();
+        String jsonString = null;
+        try {
+            //cursor.moveToFirst();
+            while (cursorID.isAfterLast() == false) {
+                int totalColumn = cursorID.getColumnCount();
+                JSONObject rowObject = new JSONObject();
+                for (int i = 0; i < totalColumn; i++) {
+                    if (cursor.getColumnName(i) != null) {
+                        try {
+                            rowObject.put(cursorID.getColumnName(i),
+                                    cursorID.getString(i));
+                        } catch (Exception e) {
+                            Log.d("LOGTAG","Error al buscar en cursor" + e.getMessage());
+                        }
+                    }
+                }
+                if (rowObject.length()!=0){
+                    resultSet = rowObject;
+                }
+                cursorID.moveToNext();
+            }
+            Log.d("LOGTAG","JSON:" + resultSet.toString());
+            jsonString = resultSet.toString();
+        }catch (Exception e){
+            Log.d("LOGTAG","ERROR ALA CONVERTIR A JSON " +e);
+        }
+        return jsonString;
+    }
+
+    /**
+     * Metodo para crear el json de las encuestas
+     * @param id recibe el id de la encuesta
+     * @return regresa una cadena con el json
+     */
+    public String jsonCoordenadas(String id) {
+        Log.d("LOGTAG", "ID " + id);
+        Cursor cursorID = dataSource.getCoordenadas(id);
         JSONObject resultSet = new JSONObject();
         String jsonString = null;
         try {
@@ -264,5 +314,64 @@ public class HistorialActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
+    }
+    //public class EnviarTask extends AsyncTask<RequestPackage,String,String> {
+    public  class EnviarCoordenadasTask extends AsyncTask<RequestPackage,String,String> {
+
+        private ShowMessageDialog showMessageDialog;
+        RequestPackage request;
+        private Context context;
+
+        public EnviarCoordenadasTask(RequestPackage request, Context context){
+            this.showMessageDialog = new ShowMessageDialog(context);
+            this.request = request;
+            this.context = context;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected String doInBackground(RequestPackage... params) {
+            int aux = 0;
+            String content = "";
+            do{
+                content = HttpManager.getData(params[0]);
+                if(!content.equals("")){
+                    aux = 2;
+                }else{
+                    aux++;
+                }
+            }while(aux != 2);
+            return content;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            try {
+                if(!s.equals("")) {
+                    JSONObject parent = new JSONObject(s);
+                    Log.d("LOGTAG","Trama de respuesta " + parent.toString());
+                    if (parent.length() > 1) {
+                        JSONObject child1 = new JSONObject(parent.getString("error"));
+                        if(child1.getString("clave").equals("OK")){
+
+                        }else{
+                            //showMessageDialog.showMessageInfo("Error", child1.getString("mensaje"));
+                            Log.d("LOGTAG",child1.getString("mensaje"));
+                        }
+                    }
+                }else{
+                    showMessageDialog.showMessageInfo("Error", "No se ha podido establecer conexión");
+                }
+            } catch (JSONException e) {
+                Log.d("LOGTAG", "Error al enviar encuesta" + e);
+                e.printStackTrace();
+            }
+        }
+
     }
 }
