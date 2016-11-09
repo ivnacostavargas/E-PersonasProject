@@ -91,19 +91,25 @@ public class EncuestaInteractorImpl implements EncuestaInteractor{
                 }
             }
             if(bandera){
-                ContentValues valuesExtra = new ContentValues();
-                valuesExtra.put(Constants.IDENCUESTA, id);
-                valuesExtra.put(Constants.TELEFONO, informationComplement.getTelefono());
-                valuesExtra.put(Constants.EMAIL, informationComplement.getEmail());
-                valuesExtra.put(Constants.FACEBOOK, informationComplement.getFacebook());
-                valuesExtra.put(Constants.TWITTER, informationComplement.getTwitter());
-                valuesExtra.put(Constants.SEXO, informationComplement.getGenero());
-                valuesExtra.put(Constants.EDAD, informationComplement.getEdad());
-                valuesExtra.put(Constants.FECHA, informationComplement.getFecha());
-                valuesExtra.put(Constants.FOTO,informationComplement.getFoto());
-                database.insert(Constants.TABLE_INFORMACION_COMPLEMENTARIA, null, valuesExtra);
+                try{
+                    ContentValues valuesExtra = new ContentValues();
+                    valuesExtra.put(Constants.IDENCUESTA, id);
+                    valuesExtra.put(Constants.TELEFONO, informationComplement.getTelefono());
+                    valuesExtra.put(Constants.EMAIL, informationComplement.getEmail());
+                    valuesExtra.put(Constants.FACEBOOK, informationComplement.getFacebook());
+                    valuesExtra.put(Constants.TWITTER, informationComplement.getTwitter());
+                    valuesExtra.put(Constants.SEXO, informationComplement.getGenero());
+                    valuesExtra.put(Constants.EDAD, informationComplement.getEdad());
+                    valuesExtra.put(Constants.FECHA, informationComplement.getFecha());
+                    valuesExtra.put(Constants.FOTO, informationComplement.getFoto());
+                    int i = (int) database.insert(Constants.TABLE_INFORMACION_COMPLEMENTARIA, null, valuesExtra);
+                    Log.d("AAA",""+i);
+                }catch (Exception e){
+                    Log.d("AAA",e.getMessage());
+                }
             }
             database.execSQL("delete from coords_prueba");
+            Cursor cursor3 = database.rawQuery("SELECT * FROM informacion_complementaria;",null);
             Toast.makeText(context, "Encuesta guardada",Toast.LENGTH_LONG).show();
             listener.navigateToHome();
         }catch (Exception e){

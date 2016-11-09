@@ -58,7 +58,7 @@ public class DataBaseOpenHelper extends SQLiteOpenHelper {
                     Constants.EMAIL + " VARCHAR(100) DEFAULT NULL, " +
                     Constants.FACEBOOK + " VARCHAR(70) DEFAULT NULL, " +
                     Constants.TWITTER + " VARCHAR(40) DEFAULT NULL, " +
-                    Constants.SEXO + " INTEGER DEFAULT NULL, " +
+                    Constants.SEXO + " VARCHAR(10) DEFAULT NULL, " +
                     Constants.EDAD + " INTEGER DEFAULT NULL, " +
                     Constants.FECHA + " DATE DEFAULT NULL, " +
                     Constants.FOTO + " TEXT DEFAULT NULL " +
@@ -90,10 +90,10 @@ public class DataBaseOpenHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int i, int i1) {
-        db.execSQL("DROP TABLE IF EXIST " + Constants.TABLE_ENCUESTAS);
-        db.execSQL("DROP TABLE IF EXIST " + Constants.TABLE_INFORMACION_COMPLEMENTARIA);
-        db.execSQL("DROP TABLE IF EXIST " + Constants.TABLE_COORDINATES);
-        db.execSQL("DROP TABLE IF EXIST coords_prueba");
+        db.execSQL("DROP TABLE IF EXISTS " + Constants.TABLE_ENCUESTAS);
+        db.execSQL("DROP TABLE IF EXISTS " + Constants.TABLE_INFORMACION_COMPLEMENTARIA);
+        db.execSQL("DROP TABLE IF EXISTS " + Constants.TABLE_COORDINATES);
+        db.execSQL("DROP TABLE IF EXISTS coords_prueba");
         onCreate(db);
     }
 }

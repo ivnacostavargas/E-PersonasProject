@@ -231,9 +231,9 @@ public class EncuestaActivity extends AppCompatActivity implements EncuestaView 
                 if(resultCode == Activity.RESULT_OK){
                     bm = (Bitmap) data.getExtras().get("data");
                     mPath = data.getData();
-                    try{
+                    /*try{
                         bm = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver(), mPath);
-                    }catch (Exception e){}
+                    }catch (Exception e){}*/
                     mImgIdentificacion.setImageBitmap(bm);
                     myBase64Image = ConvertBase64.encodeToBase64(bm, Bitmap.CompressFormat.JPEG, 100);
                 }
@@ -603,9 +603,9 @@ public class EncuestaActivity extends AppCompatActivity implements EncuestaView 
             informationComplement.setGenero("Mujer");
         }
         if(mTextEdadAprox.getText().toString().equals("")) {
-            informationComplement.setEdad("");
+            informationComplement.setEdad(0);
         }else{
-            informationComplement.setEdad(mTextEdadAprox.getText().toString());
+            informationComplement.setEdad(Integer.parseInt(mTextEdadAprox.getText().toString()));
         }
         if(mPath != null){
             informationComplement.setFoto(myBase64Image);

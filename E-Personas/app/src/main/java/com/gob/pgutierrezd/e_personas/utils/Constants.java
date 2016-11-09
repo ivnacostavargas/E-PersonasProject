@@ -40,7 +40,7 @@ public class Constants {
 
     //CONSTANTES PARA LA BASE DE DATOS
     public static final String DATABASE_NAME = "epersonas.db";
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 2;
     //Tabla de encuestas
     public static final String TABLE_ENCUESTAS = "encuestas";
     public static final String IDENCUESTA = "_id";

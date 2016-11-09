@@ -38,13 +38,15 @@ public class HistorialActivity extends AppCompatActivity {
     private ListView listaEncuestas;
     private ListAdapter adapter;
     private Cursor cursor;
-    DataSource dataSource;
+    private DataSource dataSource;
+    private ShowMessageDialog showMessageDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_historial);
         findViews();
+        showMessageDialog = new ShowMessageDialog(this);
 
         try{
             dataSource = new DataSource(this);
@@ -87,8 +89,12 @@ public class HistorialActivity extends AppCompatActivity {
                     AdapterView.AdapterContextMenuInfo info1 = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
                     String json = cur2Json(String.valueOf(info1.id));
                     String jsonInfo = jsonInfo(String.valueOf(info1.id));
+<<<<<<< HEAD
                     String jsonCoordenadas = jsonCoordenadas(String.valueOf(info1.id));
                     enviarCoordenadas(jsonCoordenadas);
+=======
+                    showMessageDialog.showMessageLoad();
+>>>>>>> refs/remotes/PabloDxCode/master
                     enviarEncuesta(json, jsonInfo);
                 }catch (Exception e){
                     Log.d("LOGTAG","Error en la opcion ENVIAR_ID " + e);
@@ -248,13 +254,10 @@ public class HistorialActivity extends AppCompatActivity {
     }
 
     public class EnviarTask extends AsyncTask<RequestPackage,String,String> {
-
-        private ShowMessageDialog showMessageDialog;
         RequestPackage request;
         private Context context;
 
         public EnviarTask(RequestPackage request, Context context){
-            this.showMessageDialog = new ShowMessageDialog(context);
             this.request = request;
             this.context = context;
         }
@@ -292,24 +295,30 @@ public class HistorialActivity extends AppCompatActivity {
                             if (parent.getInt("status") == 1) {
                                 ContentValues cv = new ContentValues();
                                 cv.put(Constants.STATUS, 1);
-                                dataSource.Update(Constants.TABLE_ENCUESTAS,cv," "+Constants.REFERENCIA_MOVIL+" = ?",parent.getString("referencia_movil"));
+                                dataSource.Update(Constants.TABLE_ENCUESTAS, cv, " " + Constants.REFERENCIA_MOVIL + " = ?", parent.getString("referencia_movil"));
                                 Toast.makeText(context,"Envio exitoso",Toast.LENGTH_LONG).show();
                                 /*Intent intent = new Intent();
                                 intent.setClass(context,HistorialActivity.class);
                                 startActivity(intent);*/
+                                showMessageDialog.closeMessage();
                                 cargarCursor();
                             }else{
+                                showMessageDialog.closeMessage();
                                 Toast.makeText(context,"Error al enviar intente de nuevo",Toast.LENGTH_LONG).show();
                             }
                         }else{
+                            showMessageDialog.closeMessage();
                             //showMessageDialog.showMessageInfo("Error", child1.getString("mensaje"));
                             Log.d("LOGTAG",child1.getString("mensaje"));
                         }
                     }
                 }else{
+                    showMessageDialog.closeMessage();
                     showMessageDialog.showMessageInfo("Error", "No se ha podido establecer conexión");
                 }
             } catch (JSONException e) {
+                showMessageDialog.closeMessage();
+                showMessageDialog.showMessageInfo("Error", "Hubo problemas al intentar subir tu encuesta.");
                 Log.d("LOGTAG", "Error al enviar encuesta" + e);
                 e.printStackTrace();
             }

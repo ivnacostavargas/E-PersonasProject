@@ -13,7 +13,7 @@ public class InformationComplement {
     private String facebook;
     private String twitter;
     private String genero;
-    private String edad;
+    private int edad;
     private String fecha;
     private String foto;
 
@@ -57,11 +57,11 @@ public class InformationComplement {
         this.genero = genero;
     }
 
-    public String getEdad() {
+    public int getEdad() {
         return edad;
     }
 
-    public void setEdad(String edad) {
+    public void setEdad(int edad) {
         this.edad = edad;
     }
 
